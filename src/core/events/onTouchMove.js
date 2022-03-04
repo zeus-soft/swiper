@@ -79,6 +79,8 @@ export default function onTouchMove(event) {
   if (swiper.params.threshold && Math.sqrt(diffX ** 2 + diffY ** 2) < swiper.params.threshold)
     return;
 
+  const device = swiper.device;
+
   if (typeof data.isScrolling === 'undefined') {
     let touchAngle;
     if (
@@ -93,6 +95,13 @@ export default function onTouchMove(event) {
         data.isScrolling = swiper.isHorizontal()
           ? touchAngle > params.touchAngle
           : 90 - touchAngle > params.touchAngle;
+
+        // 修复安卓横屏
+        if (device.android && swiper.isHorizontal()) {
+          data.isScrolling = swiper.isHorizontal()
+            ? 90 - touchAngle > params.touchAngle
+            : touchAngle > params.touchAngle;
+        }
       }
     }
   }
@@ -139,6 +148,12 @@ export default function onTouchMove(event) {
   data.isMoved = true;
 
   let diff = swiper.isHorizontal() ? diffX : diffY;
+
+  // 修复安卓横屏
+  if (device.android && swiper.isHorizontal()) {
+    diff = swiper.isHorizontal() ? diffY : diffX;
+  }
+
   touches.diff = diff;
 
   diff *= params.touchRatio;
