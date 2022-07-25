@@ -1,4 +1,4 @@
-import { getDocument } from 'ssr-window';
+import { getDocument, getWindow } from 'ssr-window';
 import $ from '../../shared/dom.js';
 import { now } from '../../shared/utils.js';
 
@@ -80,7 +80,7 @@ export default function onTouchMove(event) {
     return;
 
   const device = swiper.device;
-
+  const window = getWindow();
   if (typeof data.isScrolling === 'undefined') {
     let touchAngle;
     if (
@@ -101,6 +101,14 @@ export default function onTouchMove(event) {
           data.isScrolling = swiper.isHorizontal()
             ? 90 - touchAngle > params.touchAngle
             : touchAngle > params.touchAngle;
+        }
+
+        // 修复安卓横屏
+        if ((device.android || device.ios) && swiper.isVertical()) {
+          data.isScrolling =
+            window.innerHeight <= window.innerWidth
+              ? 90 - touchAngle > params.touchAngle
+              : touchAngle > params.touchAngle;
         }
       }
     }
@@ -152,6 +160,11 @@ export default function onTouchMove(event) {
   // 修复安卓横屏
   if (device.android && swiper.isHorizontal()) {
     diff = swiper.isHorizontal() ? diffY : diffX;
+  }
+
+  // 修复安卓横屏
+  if ((device.android || device.ios) && swiper.isVertical()) {
+    diff = window.innerHeight < window.innerWidth ? diffY : -diffX;
   }
 
   touches.diff = diff;
