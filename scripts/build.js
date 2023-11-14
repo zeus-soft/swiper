@@ -9,7 +9,6 @@ const buildReact = require('./build-react');
 const buildVue = require('./build-vue');
 const buildSvelte = require('./build-svelte');
 const buildStyles = require('./build-styles');
-const buildAngular = require('./build-angular');
 const outputCheckSize = require('./check-size');
 const { outputDir } = require('./utils/output-dir');
 
@@ -68,7 +67,6 @@ class Build {
     .add('react', buildReact)
     .add('vue', buildVue)
     .add('svelte', buildSvelte)
-    .add('angular', buildAngular)
     .run();
   elapsed.end('build', chalk.bold.green('Build completed'));
 })();
